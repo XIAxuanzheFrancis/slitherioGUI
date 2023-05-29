@@ -75,6 +75,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
       isStart = !isStart;
       repaint();
     }
+    if (keyCode == KeyEvent.VK_LEFT) {
+      direction = "L";
+    } else if (keyCode == KeyEvent.VK_RIGHT) {
+      direction = "R";
+    } else if (keyCode == KeyEvent.VK_UP) {
+      direction = "U";
+    } else if (keyCode == KeyEvent.VK_DOWN) {
+      direction = "D";
+    }
   }
 
   @Override
@@ -84,12 +93,31 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         snakeX[i] = snakeX[i - 1];
         snakeY[i] = snakeY[i - 1];
       }
-      snakeX[0] = snakeX[0] + 25;
 
-      //Boundary judgment
-      if(snakeX[0]>850){
-        snakeX[0]=25;
+      //directionMoving
+      if (direction.equals("R")) {
+        snakeX[0] = snakeX[0] + 25;
+        //Boundary judgment
+        if (snakeX[0] > 850) {
+          snakeX[0] = 25;
+        }
+      } else if (direction.equals("L")) {
+        snakeX[0] = snakeX[0] - 25;
+        if (snakeX[0] < 25) {
+          snakeX[0] = 850;
+        }
+      } else if (direction.equals("U")) {
+        snakeY[0] = snakeY[0] - 25;
+        if (snakeY[0] < 75) {
+          snakeY[0] = 650;
+        }
+      } else if (direction.equals("D")) {
+        snakeY[0] = snakeY[0] + 25;
+        if (snakeY[0] > 650) {
+          snakeY[0] = 25;
+        }
       }
+
       repaint();
     }
     timer.start();
