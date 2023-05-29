@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.rmi.activation.ActivationMonitor;
+import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -16,6 +17,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
   int[] snakeX = new int[600];
   int[] snakeY = new int[500];
   String direction;
+
+  int foodx;
+  int foody;
+  Random random = new Random();
+
   boolean isStart = false;//Game Status
   //delay ms
   Timer timer = new Timer(100, this);
@@ -29,6 +35,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     snakeX[2] = 50;
     snakeY[2] = 100;
     direction = "R";
+    //food
+    foodx = 25 + 25 * random.nextInt(34);
+    foody = 75 + 25 * random.nextInt(24);
   }
 
   public GamePanel() {
@@ -43,8 +52,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g); //clear
     this.setBackground(Color.BLACK);
-    Data.header.paintIcon(this, g, 15, 11);
-    g.fillRect(15, 75, 850, 600);
+    Data.header.paintIcon(this, g, 25, 11);
+    g.fillRect(25, 75, 850, 600);
 
     //painting a snake
     if (direction.equals("R")) {
@@ -60,6 +69,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     for (int i = 1; i < length; i++) {
       Data.body.paintIcon(this, g, snakeX[i], snakeY[i]);
     }
+
+    Data.food.paintIcon(this, g, foodx, foody);
 
     if (isStart == false) {
       g.setColor(Color.pink);
@@ -89,6 +100,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     if (isStart) {
+      if (snakeX[0] == foodx && snakeY[0] == foody) {
+        length++;
+        //Re-randomize food
+        foodx = 15 + 25 * random.nextInt(34);
+        foody = 75 + 25 * random.nextInt(23);
+      }
       for (int i = length - 1; i > 0; i--) {
         snakeX[i] = snakeX[i - 1];
         snakeY[i] = snakeY[i - 1];
