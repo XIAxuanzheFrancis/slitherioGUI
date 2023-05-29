@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
@@ -9,6 +10,7 @@ public class GamePanel extends JPanel {
   int[] snakeX = new int[600];
   int[] snakeY = new int[500];
   String direction;
+  boolean isStart = false;//Game Status
 
   public void init() {
     length = 3;
@@ -49,6 +51,12 @@ public class GamePanel extends JPanel {
 
     for (int i = 1; i < length; i++) {
       Data.body.paintIcon(this, g, snakeX[i], snakeY[i]);
+    }
+
+    if(isStart==false){
+      g.setColor(Color.pink);
+      g.setFont(new Font("Arial",Font.BOLD,50));
+      g.drawString("Press space to start the game",100,300);
     }
 
 
