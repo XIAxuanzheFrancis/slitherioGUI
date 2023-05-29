@@ -8,5 +8,6 @@ public class StartGame {
     frame.setResizable(false);
     frame.setVisible(true);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.add(new GamePanel());
   }
 }
