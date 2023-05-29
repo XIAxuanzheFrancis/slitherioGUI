@@ -1,9 +1,15 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.rmi.activation.ActivationMonitor;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
   //Snake
   int length;//816 max
@@ -11,6 +17,8 @@ public class GamePanel extends JPanel {
   int[] snakeY = new int[500];
   String direction;
   boolean isStart = false;//Game Status
+  //delay ms
+  Timer timer = new Timer(100, this);
 
   public void init() {
     length = 3;
@@ -25,6 +33,9 @@ public class GamePanel extends JPanel {
 
   public GamePanel() {
     init();
+    setFocusable(true);//Get Focused Events
+    addKeyListener(this);
+    timer.start();
   }
 
   //Anything in the game is drawn by a brush
@@ -36,16 +47,13 @@ public class GamePanel extends JPanel {
     g.fillRect(15, 75, 850, 600);
 
     //painting a snake
-    if(direction.equals("R")){
+    if (direction.equals("R")) {
       Data.right.paintIcon(this, g, snakeX[0], snakeY[0]);
-    }
-    else if(direction.equals("L")){
+    } else if (direction.equals("L")) {
       Data.left.paintIcon(this, g, snakeX[0], snakeY[0]);
-    }
-    else if(direction.equals("U")){
+    } else if (direction.equals("U")) {
       Data.up.paintIcon(this, g, snakeX[0], snakeY[0]);
-    }
-    else if(direction.equals("D")){
+    } else if (direction.equals("D")) {
       Data.down.paintIcon(this, g, snakeX[0], snakeY[0]);
     }
 
@@ -53,13 +61,46 @@ public class GamePanel extends JPanel {
       Data.body.paintIcon(this, g, snakeX[i], snakeY[i]);
     }
 
-    if(isStart==false){
+    if (isStart == false) {
       g.setColor(Color.pink);
-      g.setFont(new Font("Arial",Font.BOLD,50));
-      g.drawString("Press space to start the game",100,300);
+      g.setFont(new Font("Arial", Font.BOLD, 50));
+      g.drawString("Press space to start the game", 100, 300);
     }
+  }
 
+  @Override
+  public void keyPressed(KeyEvent e) {
+    int keyCode = e.getKeyCode();
+    if (keyCode == KeyEvent.VK_SPACE) {
+      isStart = !isStart;
+      repaint();
+    }
+  }
 
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (isStart) {
+      for (int i = length - 1; i > 0; i--) {
+        snakeX[i] = snakeX[i - 1];
+        snakeY[i] = snakeY[i - 1];
+      }
+      snakeX[0] = snakeX[0] + 25;
 
+      //Boundary judgment
+      if(snakeX[0]>850){
+        snakeX[0]=25;
+      }
+      repaint();
+    }
+    timer.start();
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
   }
 }
+
