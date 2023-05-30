@@ -26,6 +26,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
   //delay ms
   Timer timer = new Timer(100, this);
 
+  boolean isFail = false;
+  int score;
+
   public void init() {
     length = 3;
     snakeX[0] = 100;
@@ -38,6 +41,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     //food
     foodx = 25 + 25 * random.nextInt(34);
     foody = 75 + 25 * random.nextInt(24);
+    score = 0;
   }
 
   public GamePanel() {
@@ -77,14 +81,31 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
       g.setFont(new Font("Arial", Font.BOLD, 50));
       g.drawString("Press space to start the game", 100, 300);
     }
+
+    if (isFail) {
+      g.setColor(Color.RED);
+      g.setFont(new Font("Arial", Font.BOLD, 25));
+      g.drawString("Game Fail, Press space to start again", 100, 300);
+    }
+
+    g.setColor(Color.RED);
+    g.setFont(new Font("Arial", Font.BOLD, 25));
+    g.drawString("length: " + length, 750, 35);
+    g.drawString("score: " + score, 750, 60);
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
     int keyCode = e.getKeyCode();
+
     if (keyCode == KeyEvent.VK_SPACE) {
-      isStart = !isStart;
-      repaint();
+      if (isFail) {
+        isFail = false;
+        init();
+        repaint();
+      } else {
+        isStart = !isStart;
+      }
     }
     if (keyCode == KeyEvent.VK_LEFT) {
       direction = "L";
@@ -99,13 +120,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (isStart) {
+    if (isStart && isFail == false) {
       if (snakeX[0] == foodx && snakeY[0] == foody) {
         length++;
+        score += 10;
         //Re-randomize food
-        foodx = 15 + 25 * random.nextInt(34);
+        foodx = 25 + 25 * random.nextInt(34);
         foody = 75 + 25 * random.nextInt(23);
       }
+
       for (int i = length - 1; i > 0; i--) {
         snakeX[i] = snakeX[i - 1];
         snakeY[i] = snakeY[i - 1];
@@ -132,6 +155,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         snakeY[0] = snakeY[0] + 25;
         if (snakeY[0] > 650) {
           snakeY[0] = 25;
+        }
+      }
+      //fail condition
+      for (int i = 1; i < length; i++) {
+        if (snakeX[i] == snakeX[0] && snakeY[i] == snakeY[0]) {
+          isFail = true;
         }
       }
 
